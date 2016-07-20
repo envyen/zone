@@ -2,18 +2,18 @@ package com.envyen.chart;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.graphics.Shader;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.Range;
+import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 public class PieActivity extends Activity {
@@ -26,16 +26,23 @@ public class PieActivity extends Activity {
     }
 
     public class MyGraphview extends View {
+
         private String TAG = "PIR-Ranger";
-        float initialX, initialY; //gestures
-        private Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private Paint grad = new Paint(Paint.ANTI_ALIAS_FLAG);
-        private RectF rectf = new RectF(0, 0, 640, 640);
-        private PointF c = new PointF(rectf.centerX(), rectf.centerY());
-        private boolean zone[] = {false, false, false, false, false};
+        //gestures swipe  up/down
+        float initialX, initialY;
+        //paint
+        private Paint fgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private Paint bgPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        private RectF rectf = new RectF(0, 0, 640, 480);
+        private PointF center = new PointF(rectf.centerX(), rectf.centerY());
         private float relX, relY;
         private int degree = 0;
-        private float range = 8;
+
+        public float range = 8;
+        public boolean zone[] = {false, false, false, false, false};
+
+        Bitmap ourBitmap = Bitmap.createBitmap(640, 480, Bitmap.Config.ARGB_8888);
+        Canvas bCanvas = new Canvas(ourBitmap);
 
         public MyGraphview(Context context) {
             super(context);
@@ -44,81 +51,73 @@ public class PieActivity extends Activity {
         @Override
         protected void onDraw(Canvas canvas) {
             // TODO Auto-generated method stub
+            //canvas.drawBitmap(ourBitmap, 0,0, null);
             super.onDraw(canvas);
-            //grad.setShader(linearGradient);
 
-            paint.setColor(Color.parseColor("#20B176"));
-            paint.setAntiAlias(true);
-            //  paint.setAlpha(50);
-            //  canvas.drawLine(rectf.centerX(),rectf.centerY(),relX+rectf.centerX(),relY+rectf.centerY(),paint);
-            //  canvas.drawArc(rectf, 40, 20, true, paint);
-            //  canvas.drawArc(0,0,canvas.getWidth(),canvas.getWidth(),40,100,true,paint);
-            //  RectF rArc = new RectF(10, 10,canvas.getWidth()-10,canvas.getHeight()-10);
+//            Display display = getWindowManager().getDefaultDisplay();
+//            int displayWidth = display.getWidth();
+        }
 
-            paint.setStyle(Paint.Style.STROKE);
-            //paint.setStrokeWidth(2);
-            paint.setTextSize(20f);
-            paint.setAntiAlias(true);
+        private void drawbmp() {
 
-            //canvas.drawArc(rectf, 40,60, true, paint);
-            //canvas.drawArc(rectf, 60,60, true, paint);
-            //canvas.drawArc(rectf, 80,60, true, paint);
+            ourBitmap.eraseColor(Color.TRANSPARENT);
+            fgPaint.setColor(Color.parseColor("#D80000"));//20B176
+            fgPaint.setAntiAlias(true);
+            fgPaint.setStyle(Paint.Style.STROKE);
+            fgPaint.setTextSize(20f);
+            fgPaint.setAntiAlias(true);
 
             for (int i = 0; i < 5; i++) {
                 if (zone[i]) {
-                    grad.setColor(Color.parseColor("#20B176"));
-                    grad.setAntiAlias(true);
-                    grad.setStyle(Paint.Style.FILL);
-                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, grad);
-                    for (int m = 0; m < (range * 50); m = m + 5)
-                        ArcUtils.drawArc(canvas, c, m, (float) (((4 - i) * 20)) + 40, 20, grad, 10, true);
+                    bgPaint.setColor(Color.parseColor("#01A9DB"));
+                    bgPaint.setAntiAlias(true);
+                    bgPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                    for (int m = 0; m < (range * 50); m = m + 10) {
 
-                    grad.setColor(Color.parseColor("#20B176"));
-                    grad.setStyle(Paint.Style.FILL_AND_STROKE);
-                    grad.setStrokeWidth(2);
-                    //rline(canvas,rectf,0,(float)(((4-i)*20))+40,grad);
-                    rline2(canvas, c, (range * 50), (float) (((4 - i) * 20)) + 40, grad);
-
-                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, grad);
-
+                        //bgPaint.setColor(ArcUtils.blendColors(Color.parseColor("#00FF40"), Color.parseColor("#01A9DB"), (m / (range * 50))*100));
+                        ArcUtils.drawArc(bCanvas, center, m, (float) (((4 - i) * 20)) + 40, 20, bgPaint, 10, true);
+                    }
+                    bgPaint.setColor(Color.parseColor("#D80000"));
+                    bgPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+                    bgPaint.setStrokeWidth(2);
+                    //rline(canvas,rectf,0,(float)(((4-i)*20))+40,bgPaint);
+                    rline2(bCanvas, center, (range * 50), (float) (((4 - i) * 20)) + 40, bgPaint);
                 } else {
-                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, paint);
-                    paint.setColor(Color.LTGRAY);
-                    ArcUtils.drawArc(canvas, c, 300, (float) (((4 - i) * 20)) + 40, 20, paint, 10, true);
-
+                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, fgPaint);
+                    fgPaint.setColor(Color.LTGRAY);
+                    ArcUtils.drawArc(bCanvas, center, 300, (float) (((4 - i) * 20)) + 40, 20, fgPaint, 10, true);
                 }
+
+
             }
 
-            paint.setColor(Color.LTGRAY);
+            fgPaint.setColor(Color.LTGRAY);
 
-            rline(canvas, rectf, 500, 40, paint);
-            rtext(canvas, rectf, 250, 50, paint, "5");
-            rline(canvas, rectf, 500, 60, paint);
-            rtext(canvas, rectf, 250, 70, paint, "4");
-            rline(canvas, rectf, 500, 80, paint);
-            rtext(canvas, rectf, 250, 90, paint, "3");
-            rline(canvas, rectf, 500, 100, paint);
-            rtext(canvas, rectf, 250, 110, paint, "2");
-            rline(canvas, rectf, 500, 120, paint);
-            rtext(canvas, rectf, 250, 130, paint, "1");
-            rline(canvas, rectf, 500, 140, paint);
-
-            //canvas.drawLine(canvas.getWidth()/2,canvas.getHeight()/2,relX+rectf.centerX(),relY+rectf.centerY(),paint);
-            //canvas.drawCircle(relX+rectf.centerX(),relY+rectf.centerY(),15,paint);
+            rline(bCanvas, rectf, 500, 40, fgPaint);
+            rtext(bCanvas, rectf, 250, 50, fgPaint, "5");
+            rline(bCanvas, rectf, 500, 60, fgPaint);
+            rtext(bCanvas, rectf, 250, 70, fgPaint, "4");
+            rline(bCanvas, rectf, 500, 80, fgPaint);
+            rtext(bCanvas, rectf, 250, 90, fgPaint, "3");
+            rline(bCanvas, rectf, 500, 100, fgPaint);
+            rtext(bCanvas, rectf, 250, 110, fgPaint, "2");
+            rline(bCanvas, rectf, 500, 120, fgPaint);
+            rtext(bCanvas, rectf, 250, 130, fgPaint, "1");
+            rline(bCanvas, rectf, 500, 140, fgPaint);
 
             for (int x = 0; x < 500; x = x + 10)
-                ArcUtils.drawArc(canvas, c, x, 40, 100, paint, 10, false);
+                ArcUtils.drawArc(bCanvas, center, x, 40, 100, fgPaint, 10, false);
 
         }
 
-        private void rline2(Canvas canvas, PointF center, float radius, float degree, Paint paint) {
+        private void rline2(Canvas canvas, PointF center, float radius, float degree, Paint fgPaint) {
 
             float angle = (float) (degree * Math.PI / 180);
             float stopX = (float) (center.x + (radius) * Math.cos(angle));
             float stopY = (float) (center.y + (radius) * Math.sin(angle));
 
             canvas.save();
-            canvas.drawLine(center.x, center.y, stopX, stopY, paint);
+            canvas.drawLine(center.x, center.y, stopX, stopY, fgPaint);
             canvas.restore();
 
         }
@@ -190,9 +189,14 @@ public class PieActivity extends Activity {
                         //Log.d("TAG", "onTouchEvent: "+ degree + "   | Zone:" + i + "=" + zone[i]);
                     }
                 }
+                drawbmp();
+                ImageView pie = (ImageView) findViewById(R.id.imageView1);
+                pie.setImageBitmap(ourBitmap);
                 invalidate();
             }
             return super.onTouchEvent(event);
         }
     }
 }
+
+
