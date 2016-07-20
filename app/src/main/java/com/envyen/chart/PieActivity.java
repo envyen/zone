@@ -51,28 +51,18 @@ public class PieActivity extends Activity {
         protected void onDraw(Canvas canvas) {
             // TODO Auto-generated method stub
             super.onDraw(canvas);
-            //grad.setShader(linearGradient);
 
             paint.setColor(Color.parseColor("#20B176"));
             paint.setAntiAlias(true);
-            //  paint.setAlpha(50);
-            //  canvas.drawLine(rectf.centerX(),rectf.centerY(),relX+rectf.centerX(),relY+rectf.centerY(),paint);
-            //  canvas.drawArc(rectf, 40, 20, true, paint);
-            //  canvas.drawArc(0,0,canvas.getWidth(),canvas.getWidth(),40,100,true,paint);
-            //  RectF rArc = new RectF(10, 10,canvas.getWidth()-10,canvas.getHeight()-10);
-
             paint.setStyle(Paint.Style.STROKE);
-            //paint.setStrokeWidth(2);
             paint.setTextSize(22f);
             paint.setAntiAlias(true);
 
-            //canvas.drawArc(rectf, 40,60, true, paint);
-            //canvas.drawArc(rectf, 60,60, true, paint);
-            //canvas.drawArc(rectf, 80,60, true, paint);
+            // draw selected / non selected zones
 
             for (int i = 0; i < 5; i++) {
                 if (zone[i]) {
-                    // Zone is Selected
+                    // Zone is Selected : Our Greeeeeen
 
                     grad.setColor(Color.parseColor("#20B176"));
                     grad.setAntiAlias(true);
@@ -81,25 +71,19 @@ public class PieActivity extends Activity {
                     for (int m = 0; m < ((range + 3) * 50); m = m + 5)
                         ArcUtils.drawArc(canvas, c, m, (float) (((4 - i) * 20)) + 40, 20, grad, 10, true);
 
-                    // grad.setColor(Color.parseColor("#20B176"));
                     grad.setStyle(Paint.Style.FILL_AND_STROKE);
                     grad.setStrokeWidth(2);
-                    // rline2(canvas, c, ((range+3) * 50), (float) (((4 - i) * 20)) + 40, grad);
-                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, grad);
 
                 } else {
 
-                    // Not Selected zone
-
-                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, paint);
+                    // Not Selected zone Gray
                     paint.setColor(Color.LTGRAY);
                     ArcUtils.drawArc(canvas, c, 300, (float) (((4 - i) * 20)) + 40, 20, paint, 10, true);
-
                 }
             }
 
+            //zone seperator and zone no.
             paint.setColor(Color.LTGRAY);
-
             rline(canvas, rectf, 500, 40, paint);
             rtext(canvas, rectf, 250, 50, paint, "5");
             rline(canvas, rectf, 500, 60, paint);
@@ -112,13 +96,11 @@ public class PieActivity extends Activity {
             rtext(canvas, rectf, 250, 130, paint, "1");
             rline(canvas, rectf, 500, 140, paint);
 
-            //canvas.drawLine(canvas.getWidth()/2,canvas.getHeight()/2,relX+rectf.centerX(),relY+rectf.centerY(),paint);
-            //canvas.drawCircle(relX+rectf.centerX(),relY+rectf.centerY(),15,paint);
-
+            // grey arc bg for all zones
             for (int x = 0; x < 500; x = x + 10)
                 ArcUtils.drawArc(canvas, c, x, 40, 100, paint, 10, false);
 
-            canvas.drawText("PIR Range: " + range, rectf.centerX() - 70, 250, paint);
+            canvas.drawText("PIR Range: " + (int) range, rectf.centerX() - 50, 250, paint);
 
         }
 
@@ -141,7 +123,6 @@ public class PieActivity extends Activity {
             float angle = (float) (degree * Math.PI / 180);
             stopX = (float) (rectf.centerX() + (radius / 2) * Math.cos(angle));
             stopY = (float) (rectf.centerY() + (radius / 2) * Math.sin(angle));
-            // paint.setColor(Color.LTGRAY);
             canvas.drawLine(rectf.centerX(), rectf.centerY(), stopX, stopY, paint);
             canvas.restore();
         }
@@ -154,7 +135,6 @@ public class PieActivity extends Activity {
             stopX = (float) (rectf.centerX() + (radius / 2) * Math.cos(angle));
             stopY = (float) (rectf.centerY() + (radius / 2) * Math.sin(angle));
             paint.setColor(Color.GRAY);
-            //canvas.drawLine(rectf.centerX(), rectf.centerY(), stopX, stopY, paint);
             canvas.drawText(text, stopX, stopY, paint);
             canvas.restore();
         }
@@ -201,7 +181,7 @@ public class PieActivity extends Activity {
                         //Log.d("TAG", "onTouchEvent: "+ degree + "   | Zone:" + i + "=" + zone[i]);
                     }
                 }
-                invalidate();
+                invalidate(); //draw
             }
             return super.onTouchEvent(event);
         }
