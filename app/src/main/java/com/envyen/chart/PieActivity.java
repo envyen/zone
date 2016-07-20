@@ -15,14 +15,20 @@ import android.util.Range;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class PieActivity extends Activity {
+
+    public TextView txtPie;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pie);
         LinearLayout linear = (LinearLayout) findViewById(R.id.linear);
+
         linear.addView(new MyGraphview(this));
+        txtPie = (TextView) findViewById(R.id.txtpie);
     }
 
     public class MyGraphview extends View {
@@ -35,7 +41,7 @@ public class PieActivity extends Activity {
         private boolean zone[] = {false, false, false, false, false};
         private float relX, relY;
         private int degree = 0;
-        private float range = 8;
+        private float range = 5;
 
         public MyGraphview(Context context) {
             super(context);
@@ -57,7 +63,7 @@ public class PieActivity extends Activity {
 
             paint.setStyle(Paint.Style.STROKE);
             //paint.setStrokeWidth(2);
-            paint.setTextSize(20f);
+            paint.setTextSize(22f);
             paint.setAntiAlias(true);
 
             //canvas.drawArc(rectf, 40,60, true, paint);
@@ -66,22 +72,25 @@ public class PieActivity extends Activity {
 
             for (int i = 0; i < 5; i++) {
                 if (zone[i]) {
+                    // Zone is Selected
+
                     grad.setColor(Color.parseColor("#20B176"));
                     grad.setAntiAlias(true);
                     grad.setStyle(Paint.Style.FILL);
-                    //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, grad);
-                    for (int m = 0; m < (range * 50); m = m + 5)
+
+                    for (int m = 0; m < ((range + 3) * 50); m = m + 5)
                         ArcUtils.drawArc(canvas, c, m, (float) (((4 - i) * 20)) + 40, 20, grad, 10, true);
 
-                    grad.setColor(Color.parseColor("#20B176"));
+                    // grad.setColor(Color.parseColor("#20B176"));
                     grad.setStyle(Paint.Style.FILL_AND_STROKE);
                     grad.setStrokeWidth(2);
-                    //rline(canvas,rectf,0,(float)(((4-i)*20))+40,grad);
-                    rline2(canvas, c, (range * 50), (float) (((4 - i) * 20)) + 40, grad);
-
+                    // rline2(canvas, c, ((range+3) * 50), (float) (((4 - i) * 20)) + 40, grad);
                     //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, grad);
 
                 } else {
+
+                    // Not Selected zone
+
                     //canvas.drawArc(rectf, (float)(((4-i)*20))+40,20, true, paint);
                     paint.setColor(Color.LTGRAY);
                     ArcUtils.drawArc(canvas, c, 300, (float) (((4 - i) * 20)) + 40, 20, paint, 10, true);
@@ -108,6 +117,8 @@ public class PieActivity extends Activity {
 
             for (int x = 0; x < 500; x = x + 10)
                 ArcUtils.drawArc(canvas, c, x, 40, 100, paint, 10, false);
+
+            canvas.drawText("PIR Range: " + range, rectf.centerX() - 70, 250, paint);
 
         }
 
@@ -164,19 +175,19 @@ public class PieActivity extends Activity {
                 ranged = false;
                 if (initialY < finalY) {
                     if ((finalY - initialY) > 100) {
-                        if (range < 8)
+                        if (range < 5)
                             range++;
                         ranged = true;
                     }
-                    Log.d(TAG, "Up to Down swipe performed" + range);
+                    Log.d(TAG, "Range Increased : " + range);
                 } else if (initialY > finalY) {
                     if ((initialY - finalY) > 100) {
-                        if (range > 3)
+                        if (range > 0)
                             range--;
                         ranged = true;
 
                     }
-                    Log.d(TAG, "Down to Up swipe performed" + range);
+                    Log.d(TAG, "Range decreased : " + range);
                 }
                 if (!ranged) {
                     relX = event.getX() - (rectf.right - rectf.left) * 0.5f;

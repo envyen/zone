@@ -9,12 +9,34 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.envyen.chart.PieActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="PIR Zone selection"
+        android:id="@+id/textView"
+        android:layout_centerHorizontal="true"
+        android:textAlignment="center"
+        android:textSize="22dp" />
 
     <LinearLayout
         android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"></LinearLayout>
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Touch to Select Zone \nSwipe Up/Down to change range"
+        android:id="@+id/txtpie"
+        android:textAlignment="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/linear"
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>
